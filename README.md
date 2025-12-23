@@ -17,14 +17,14 @@ Options:
 
 ## Cross-compilation
 
-## Windows on Linux
+## Windows on Linux/macOS
 
 ```sh
 # Add target
 rustup target add x86_64-pc-windows-gnu
 # Install linker
-#apt update
-apt install -y mingw-w64
+apt install -y mingw-w64 # Linux
+brew install mingw-w64 # macOS
 ```
 
 `Cargo.toml`
