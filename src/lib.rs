@@ -6,6 +6,14 @@ pub fn extract_asn1_blocks(content: &str) -> String {
     for cap in re.captures_iter(content) {
         result.push(cap.get(1).map_or("", |m| m.as_str()));
     }
+
+    if result.is_empty() {
+        let fallback_re = Regex::new(r"(?m)^-- \*+[\s\S]*?^END").unwrap();
+        for mat in fallback_re.find_iter(content) {
+            result.push(mat.as_str());
+        }
+    }
+
     result.join("")
 }
 
@@ -63,5 +71,20 @@ one block
 one block
 "#;
         assert_eq!(extract_asn1_blocks(input), expected);
+    }
+
+    #[test]
+    fn test_fallback_extraction() {
+        let input = r#"
+Some text
+-- *****
+My ASN.1 Content
+END
+More text
+"#;
+        let expected = r#"-- *****
+My ASN.1 Content
+END"#;
+        assert_eq!(extract_asn1_blocks(input).trim(), expected);
     }
 }
